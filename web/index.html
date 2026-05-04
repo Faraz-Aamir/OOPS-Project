@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Online Judge - Competitive Programming Platform">
+    <title>Online Judge | CodeArena</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav id="navbar">
+        <div class="nav-brand">
+            <span class="brand-icon">⚡</span>
+            <span class="brand-text">Code<span class="accent">Arena</span></span>
+        </div>
+        <div class="nav-links" id="nav-links">
+            <a href="#" onclick="showSection('home')" class="nav-link active">Home</a>
+            <a href="#" onclick="showSection('problems')" class="nav-link">Problems</a>
+            <a href="#" onclick="showSection('contest')" class="nav-link">Contest</a>
+        </div>
+        <div class="nav-auth" id="nav-auth">
+            <button class="btn btn-outline" onclick="showSection('login')">Login</button>
+            <button class="btn btn-primary" onclick="showSection('register')">Register</button>
+        </div>
+        <div class="nav-user" id="nav-user" style="display:none;">
+            <span class="user-score" id="user-score">0 pts</span>
+            <span class="user-name" id="user-display"></span>
+            <button class="btn btn-danger-sm" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- HOME SECTION -->
+    <section id="section-home" class="section active">
+        <div class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">Welcome to <span class="accent">CodeArena</span></h1>
+                <p class="hero-subtitle">Sharpen your C++ skills with curated problems across 5 difficulty levels. Compete in timed contests and climb the leaderboard.</p>
+                <div class="hero-stats">
+                    <div class="stat-card"><span class="stat-num">50</span><span class="stat-label">Problems</span></div>
+                    <div class="stat-card"><span class="stat-num">5</span><span class="stat-label">Difficulty Levels</span></div>
+                    <div class="stat-card"><span class="stat-num">3</span><span class="stat-label">Contest Types</span></div>
+                </div>
+                <button class="btn btn-primary btn-lg" onclick="showSection('register')">Get Started</button>
+            </div>
+            <div class="hero-visual">
+                <div class="code-window">
+                    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                    <pre class="code-body"><code>#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    cout &lt;&lt; "Hello, CodeArena!";
+    return 0;
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOGIN SECTION -->
+    <section id="section-login" class="section">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h2>Login</h2>
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" placeholder="Enter username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    <p class="auth-switch">Don't have an account? <a href="#" onclick="showSection('register')">Register</a></p>
+                </form>
+                <div id="login-msg" class="msg"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REGISTER SECTION -->
+    <section id="section-register" class="section">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h2>Create Account</h2>
+                <form id="register-form" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label for="reg-username">Username</label>
+                        <input type="text" id="reg-username" placeholder="Choose username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">Email</label>
+                        <input type="email" id="reg-email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Password</label>
+                        <input type="password" id="reg-password" placeholder="Choose password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Register</button>
+                    <p class="auth-switch">Already have an account? <a href="#" onclick="showSection('login')">Login</a></p>
+                </form>
+                <div id="register-msg" class="msg"></div>
+            </div>
+        </div>
+        <!-- Verification popup -->
+        <div id="verify-modal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <h3>Verify Email</h3>
+                <p>Check the server console for your verification code.</p>
+                <input type="text" id="verify-code" placeholder="Enter 6-digit code">
+                <input type="hidden" id="verify-email">
+                <button class="btn btn-primary" onclick="handleVerify()">Verify</button>
+                <div id="verify-msg" class="msg"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROBLEMS SECTION -->
+    <section id="section-problems" class="section">
+        <div class="container">
+            <h2>Problem Bank</h2>
+            <div class="filter-bar">
+                <button class="filter-btn active" onclick="filterProblems(0, this)">All</button>
+                <button class="filter-btn" onclick="filterProblems(1, this)">⭐ Easy</button>
+                <button class="filter-btn" onclick="filterProblems(2, this)">⭐⭐</button>
+                <button class="filter-btn" onclick="filterProblems(3, this)">⭐⭐⭐ Medium</button>
+                <button class="filter-btn" onclick="filterProblems(4, this)">⭐⭐⭐⭐</button>
+                <button class="filter-btn" onclick="filterProblems(5, this)">⭐⭐⭐⭐⭐ Hard</button>
+            </div>
+            <div id="problems-list" class="problems-grid"></div>
+        </div>
+    </section>
+
+    <!-- PROBLEM DETAIL (solve page) -->
+    <section id="section-solve" class="section">
+        <div class="solve-layout">
+            <div class="problem-panel">
+                <h3 id="solve-title"></h3>
+                <div id="solve-difficulty" class="difficulty-badge"></div>
+                <div id="solve-description" class="problem-desc"></div>
+                <div class="problem-meta">
+                    <h4>Constraints</h4>
+                    <p id="solve-constraints"></p>
+                    <h4>Sample Input</h4>
+                    <pre id="solve-sample-input"></pre>
+                    <h4>Sample Output</h4>
+                    <pre id="solve-sample-output"></pre>
+                </div>
+            </div>
+            <div class="editor-panel">
+                <div class="editor-header">
+                    <span>Solution (C++)</span>
+                    <div class="editor-actions">
+                        <button class="btn btn-outline btn-sm" onclick="resetEditor()">Reset</button>
+                        <button class="btn btn-primary btn-sm" id="submit-btn" onclick="submitSolution()">Submit</button>
+                    </div>
+                </div>
+                <textarea id="code-editor" spellcheck="false" placeholder="Write your C++ solution here..."></textarea>
+                <div id="verdict-box" class="verdict-box" style="display:none;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTEST SECTION -->
+    <section id="section-contest" class="section">
+        <div class="container">
+            <div id="contest-lobby">
+                <h2>Contest Mode</h2>
+                <p class="contest-desc">Compete in a timed contest with 10 problems matched to your skill level. Solve fast for bonus points!</p>
+                <div class="contest-types">
+                    <div class="contest-type-card">
+                        <h3>🟢 Beginner</h3>
+                        <p>70% easy, 20% medium, 10% hard</p>
+                    </div>
+                    <div class="contest-type-card">
+                        <h3>🟡 Intermediate</h3>
+                        <p>20% easy, 50% medium, 30% hard</p>
+                    </div>
+                    <div class="contest-type-card">
+                        <h3>🔴 Advanced</h3>
+                        <p>10% easy, 30% medium, 60% hard</p>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-lg" onclick="startContest()">Start Contest</button>
+                <div id="contest-msg" class="msg"></div>
+            </div>
+            <div id="contest-active" style="display:none;">
+                <div class="contest-header">
+                    <h2>Contest In Progress</h2>
+                    <div class="contest-timer" id="contest-timer">60:00</div>
+                    <div class="contest-score">Score: <span id="contest-score">0</span></div>
+                </div>
+                <div class="contest-problems" id="contest-problems"></div>
+                <div class="contest-solve-layout" id="contest-solve" style="display:none;">
+                    <div class="contest-problem-panel">
+                        <h3 id="contest-problem-title"></h3>
+                        <p id="contest-problem-desc" class="problem-desc"></p>
+                        <div class="problem-meta">
+                            <h4>Sample Input</h4>
+                            <pre id="contest-sample-input"></pre>
+                            <h4>Sample Output</h4>
+                            <pre id="contest-sample-output"></pre>
+                        </div>
+                        <button class="btn btn-outline btn-sm" onclick="document.getElementById('contest-solve').style.display='none'" style="margin-top:1.5rem;">← Back to Problems</button>
+                    </div>
+                    <div class="contest-editor-panel">
+                        <div class="editor-header">
+                            <span>Solution (C++)</span>
+                            <div class="editor-actions">
+                                <button class="btn btn-outline btn-sm" onclick="saveContestProgress()">Save Progress</button>
+                                <button class="btn btn-primary btn-sm" onclick="submitContestSolution()">Submit</button>
+                            </div>
+                        </div>
+                        <textarea id="contest-editor" spellcheck="false" placeholder="Write your C++ solution here..."></textarea>
+                        <div id="contest-verdict" class="verdict-box" style="display:none;"></div>
+                    </div>
+                </div>
+                <button class="btn btn-danger" onclick="endContest()">End Contest</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- DELETE ACCOUNT SECTION (accessible from user menu) -->
+    <div id="delete-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>⚠️ Delete Account</h3>
+            <p>This will permanently delete your account and all data. This action cannot be undone.</p>
+            <button class="btn btn-danger" onclick="deleteAccount()">Delete My Account</button>
+            <button class="btn btn-outline" onclick="closeModal('delete-modal')">Cancel</button>
+        </div>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>
