@@ -71,6 +71,9 @@ void EvaluationEngine::evaluate(IEvaluable* submission, Problem* problem) {
     }
 
     // Write source to temp file
+    std::cerr << "=== DEBUG FULL CODE ===" << std::endl;
+    std::cerr << fullCode << std::endl;
+    std::cerr << "=== END DEBUG FULL CODE ===" << std::endl;
     MyString sourceFile = tempDir + "/solution.cpp";
     MyString binaryFile = tempDir + "/solution";
 
@@ -118,8 +121,25 @@ void EvaluationEngine::evaluate(IEvaluable* submission, Problem* problem) {
         }
 
         // Compare
+        std::cerr << "=== DEBUG TEST CASE " << i << " ===" << std::endl;
+        std::cerr << "ACTUAL OUTPUT: [" << output << "]" << std::endl;
+        std::cerr << "EXPECTED OUTPUT: [" << testCases[i].getExpectedOutput() << "]" << std::endl;
+        std::cerr << "ACTUAL LEN: " << output.trim().length() << " EXPECTED LEN: " << testCases[i].getExpectedOutput().trim().length() << std::endl;
         if (compareOutput(output, testCases[i].getExpectedOutput())) {
             passed++;
+            std::cerr << "RESULT: MATCH" << std::endl;
+        } else {
+            std::cerr << "RESULT: MISMATCH" << std::endl;
+            // Print char-by-char comparison
+            MyString a = output.trim();
+            MyString e = testCases[i].getExpectedOutput().trim();
+            for (int c = 0; c < a.length() || c < e.length(); c++) {
+                int ac = (c < a.length()) ? (unsigned char)a[c] : -1;
+                int ec = (c < e.length()) ? (unsigned char)e[c] : -1;
+                if (ac != ec) {
+                    std::cerr << "DIFF at pos " << c << ": actual=" << ac << " expected=" << ec << std::endl;
+                }
+            }
         }
     }
 

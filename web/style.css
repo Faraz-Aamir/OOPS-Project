@@ -260,7 +260,26 @@ body {
     padding: 8px 20px; border-radius: var(--radius-sm);
     border: 1px solid var(--border);
 }
-.contest-score { color: var(--text-secondary); font-size: 1rem; }
+.contest-score { color: var(--text-secondary); font-size: 1.1rem; font-weight: 600; }
+.contest-score span { color: var(--accent-light); font-size: 1.4rem; font-weight: 800; }
+
+/* Solved problem cards */
+.problem-card.solved {
+    border-color: var(--success);
+    background: rgba(16, 185, 129, 0.08);
+}
+.problem-card.solved:hover {
+    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.2);
+}
+.solved-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--success);
+}
 
 .contest-problems { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
 

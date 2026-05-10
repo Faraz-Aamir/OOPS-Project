@@ -7,6 +7,8 @@ let allProblems = [];
 let currentProblemId = null;
 let contestTimerInterval = null;
 let currentContestProblemIndex = -1;
+let solvedProblems = new Set();  // Track which contest problem indices are solved
+let contestScore = 0;            // Track running contest score
 
 // ===== API HELPER =====
 async function api(endpoint, method = 'GET', data = null) {
@@ -197,6 +199,10 @@ async function startContest() {
         showMsg('contest-msg', res.message, 'error');
         return;
     }
+    // Reset tracking for new contest
+    solvedProblems = new Set();
+    contestScore = 0;
+    document.getElementById('contest-score').textContent = '0';
     document.getElementById('contest-lobby').style.display = 'none';
     document.getElementById('contest-active').style.display = 'block';
 
@@ -209,19 +215,18 @@ async function loadContestProblems() {
     const res = await api('/api/contest/status');
     if (res.status !== 'ok' || !res.data) return;
 
-    // Get all problems for the contest
-    const probsRes = await api('/api/problems');
+    // Get the ACTUAL contest problems (not the global list)
+    const probsRes = await api('/api/contest/problems');
     if (probsRes.status !== 'ok') return;
 
     const grid = document.getElementById('contest-problems');
     const diffLabels = ['', 'Easy', 'Easy+', 'Medium', 'Hard', 'Expert'];
-    // Show first N problems based on contest
-    const count = res.data.problemCount;
-    const contestProbs = probsRes.data.slice(0, count);
+    const contestProbs = probsRes.data;
     grid.innerHTML = contestProbs.map((p, i) => `
-        <div class="problem-card" onclick="openContestProblem(${i}, ${p.id})">
+        <div class="problem-card ${solvedProblems.has(i) ? 'solved' : ''}" onclick="openContestProblem(${i}, ${p.id})">
             <div style="display:flex;justify-content:space-between;align-items:center;">
                 <span class="problem-id">Problem ${i + 1}</span>
+                ${solvedProblems.has(i) ? '<span class="solved-badge">✅ Completed</span>' : ''}
                 <span class="difficulty-badge diff-${p.difficulty}">${diffLabels[p.difficulty]}</span>
             </div>
             <h4>${p.title}</h4>
@@ -245,20 +250,51 @@ async function openContestProblem(index, id) {
 
 async function submitContestSolution() {
     const code = document.getElementById('contest-editor').value;
+    const submitBtn = document.querySelector('#contest-solve .btn-primary');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Evaluating...';
+
     const res = await api('/api/contest/submit', 'POST', {
         problemIndex: currentContestProblemIndex.toString(),
         code: code
     });
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit';
+
     const vBox = document.getElementById('contest-verdict');
     vBox.style.display = 'block';
     if (res.status === 'ok') {
         const verdict = res.data.verdict;
-        vBox.textContent = '🏁 Verdict: ' + verdict;
         if (verdict === 'ACCEPTED') {
+            vBox.textContent = '✅ Verdict: ACCEPTED — Well done!';
             vBox.className = 'verdict-box verdict-accepted';
+
+            // Update score
+            contestScore = res.data.score;
+            document.getElementById('contest-score').textContent = contestScore;
+
+            // Mark problem as solved
+            solvedProblems.add(res.data.problemIndex);
+
+            // Refresh problem list to show Completed badge
+            loadContestProblems();
+
+            // Auto-navigate back to problem list after 1.5 seconds
+            setTimeout(() => {
+                document.getElementById('contest-solve').style.display = 'none';
+            }, 1500);
         } else if (verdict === 'WRONG_ANSWER') {
+            vBox.textContent = '❌ Verdict: WRONG_ANSWER — Try again!';
             vBox.className = 'verdict-box verdict-wrong';
+        } else if (verdict === 'COMPILATION_ERROR') {
+            vBox.textContent = '⚠️ Verdict: COMPILATION_ERROR — Check your code!';
+            vBox.className = 'verdict-box verdict-error';
+        } else if (verdict === 'TIME_LIMIT_EXCEEDED') {
+            vBox.textContent = '⏱️ Verdict: TIME_LIMIT_EXCEEDED';
+            vBox.className = 'verdict-box verdict-error';
         } else {
+            vBox.textContent = '🏁 Verdict: ' + verdict;
             vBox.className = 'verdict-box verdict-error';
         }
     } else {

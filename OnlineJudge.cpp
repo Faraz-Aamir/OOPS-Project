@@ -3,6 +3,7 @@
 
 #include "OnlineJudge.h"
 #include "HttpServer.h"
+#include "ScoringEngine.h"
 
 OnlineJudge::OnlineJudge() : vfs(nullptr), problemBank(nullptr),
     userManager(nullptr), sessionManager(nullptr), contestManager(nullptr) {}
@@ -208,6 +209,22 @@ MyString OnlineJudge::handleAPIRequest(const MyString& path, const MyString& met
         return jsonResponse("ok", "Contest status", data);
     }
 
+    if (path == "/api/contest/problems" && method == "GET") {
+        if (!sessionManager->isLoggedIn()) return jsonResponse("error", "Not logged in.");
+        Contest* c = contestManager->getActiveContest(sessionManager->getCurrentUser()->getUsername());
+        if (!c) return jsonResponse("error", "No active contest.");
+        const DynamicArray<Problem*>& cProbs = c->getProblems();
+        MyString data = "[";
+        for (int i = 0; i < cProbs.size(); i++) {
+            if (i > 0) data += ",";
+            data += "{\"id\":" + MyString::fromInt(cProbs[i]->getProblemId())
+                + ",\"title\":\"" + cProbs[i]->getTitle()
+                + "\",\"difficulty\":" + MyString::fromInt(cProbs[i]->getDifficulty()) + "}";
+        }
+        data += "]";
+        return jsonResponse("ok", "Contest problems loaded", data);
+    }
+
     if (path == "/api/contest/submit" && method == "POST") {
         if (!sessionManager->isLoggedIn()) return jsonResponse("error", "Not logged in.");
         User* user = sessionManager->getCurrentUser();
@@ -216,13 +233,19 @@ MyString OnlineJudge::handleAPIRequest(const MyString& path, const MyString& met
         MyString indexStr = getField("problemIndex");
         MyString code = getField("code");
         // Unescape JSON escape sequences in code
+        // IMPORTANT: \\ must be unescaped FIRST before \n and \t
+        code.replace(MyString("\\\\"), MyString("\\ESCAPE_PLACEHOLDER\\"));
         code.replace(MyString("\\\""), MyString("\""));
         code.replace(MyString("\\t"), MyString("\t"));
         code.replace(MyString("\\n"), MyString("\n"));
-        code.replace(MyString("\\\\"), MyString("\\"));
+        code.replace(MyString("\\ESCAPE_PLACEHOLDER\\"), MyString("\\"));
         int idx = indexStr.toInt();
         Verdict v = contestManager->submitSolution(c, idx, code, user);
-        MyString data = "{\"verdict\":\"" + IEvaluable::verdictToString(v) + "\"}";
+        // Calculate running score
+        int runningScore = ScoringEngine::calculateScore(c);
+        MyString data = "{\"verdict\":\"" + IEvaluable::verdictToString(v)
+            + "\",\"score\":" + MyString::fromInt(runningScore)
+            + ",\"problemIndex\":" + MyString::fromInt(idx) + "}";
         return jsonResponse("ok", "Submission evaluated", data);
     }
 
@@ -253,10 +276,11 @@ MyString OnlineJudge::handleAPIRequest(const MyString& path, const MyString& met
         if (!c) return jsonResponse("error", "No active contest.");
         MyString indexStr = getField("problemIndex");
         MyString code = getField("code");
+        code.replace(MyString("\\\\"), MyString("\\ESCAPE_PLACEHOLDER\\"));
         code.replace(MyString("\\\""), MyString("\""));
         code.replace(MyString("\\t"), MyString("\t"));
         code.replace(MyString("\\n"), MyString("\n"));
-        code.replace(MyString("\\\\"), MyString("\\"));
+        code.replace(MyString("\\ESCAPE_PLACEHOLDER\\"), MyString("\\"));
         contestManager->saveProgress(c, indexStr.toInt(), code);
         return jsonResponse("ok", "Progress saved.");
     }
