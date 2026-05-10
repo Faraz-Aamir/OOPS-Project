@@ -1,6 +1,8 @@
 // StorageMedium.h — Physical storage device (HDD/SSD/Optical)
 // Ported from Assignment 3 — no STL used
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #ifndef STORAGE_MEDIUM_H
 #define STORAGE_MEDIUM_H

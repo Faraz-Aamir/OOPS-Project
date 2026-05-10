@@ -1,6 +1,8 @@
 // User.h — System user model
 // Ported from Assignment 3 + extended for Online Judge (email, password, session)
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #ifndef USER_H
 #define USER_H

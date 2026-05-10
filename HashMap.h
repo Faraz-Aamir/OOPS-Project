@@ -1,6 +1,8 @@
 // HashMap.h — Key-value associative container using chaining (replaces std::map/std::unordered_map)
 // No STL containers used anywhere
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #ifndef HASHMAP_H
 #define HASHMAP_H

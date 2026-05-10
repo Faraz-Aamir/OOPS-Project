@@ -1,6 +1,8 @@
 // Directory.h — Directory entity (owns children via composition)
 // Ported from Assignment 3 — no STL used
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #ifndef DIRECTORY_H
 #define DIRECTORY_H

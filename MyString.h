@@ -1,6 +1,8 @@
 // MyString.h — Custom string wrapper using char arrays (replaces std::string)
 // No STL containers or std::string used anywhere
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #ifndef MYSTRING_H
 #define MYSTRING_H

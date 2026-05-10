@@ -1,6 +1,8 @@
 // LinkedList.h — Doubly-linked list (replaces std::list)
 // No STL containers used anywhere
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H

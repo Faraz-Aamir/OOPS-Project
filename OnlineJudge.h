@@ -1,6 +1,8 @@
 // OnlineJudge.h — Main application controller
 // Wires all layers together
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #ifndef ONLINEJUDGE_H
 #define ONLINEJUDGE_H

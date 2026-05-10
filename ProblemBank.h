@@ -1,5 +1,7 @@
 // ProblemBank.h — Problem storage, loading, and filtering
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #ifndef PROBLEMBANK_H
 #define PROBLEMBANK_H

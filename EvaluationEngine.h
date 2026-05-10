@@ -1,5 +1,7 @@
 // EvaluationEngine.h — Compile, run, and compare submissions
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #ifndef EVALUATIONENGINE_H
 #define EVALUATIONENGINE_H

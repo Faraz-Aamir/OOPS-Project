@@ -1,5 +1,7 @@
 // IntermediateContest.cpp — Intermediate: 20% easy, 50% medium, 30% hard
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #include "IntermediateContest.h"
 #include "ProblemBank.h"

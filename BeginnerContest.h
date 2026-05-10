@@ -1,6 +1,8 @@
 // BeginnerContest.h — Beginner contest variant (easy-heavy)
 // INHERITANCE: Extends Contest with 70% easy, 20% medium, 10% hard
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #ifndef BEGINNERCONTEST_H
 #define BEGINNERCONTEST_H

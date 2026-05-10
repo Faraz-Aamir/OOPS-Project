@@ -1,5 +1,7 @@
 // main.cpp — Entry point for Online Judge
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #include "OnlineJudge.h"
 #include <iostream>

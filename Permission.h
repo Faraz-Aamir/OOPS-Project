@@ -1,6 +1,8 @@
 // Permission.h — File/directory permission model (rwxrwxrwx)
 // Ported from Assignment 3 — no STL used
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #ifndef PERMISSION_H
 #define PERMISSION_H

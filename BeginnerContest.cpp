@@ -1,5 +1,7 @@
 // BeginnerContest.cpp — Beginner contest: 70% easy, 20% medium, 10% hard
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #include "BeginnerContest.h"
 #include "ProblemBank.h"

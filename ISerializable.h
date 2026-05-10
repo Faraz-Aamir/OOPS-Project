@@ -1,6 +1,8 @@
 // ISerializable.h — Abstract interface for VFS persistence
 // Shared persistence contract across all domain objects
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #ifndef ISERIALIZABLE_H
 #define ISERIALIZABLE_H

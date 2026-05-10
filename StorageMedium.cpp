@@ -1,5 +1,7 @@
 // StorageMedium.cpp — Storage medium implementation
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #include "StorageMedium.h"
 

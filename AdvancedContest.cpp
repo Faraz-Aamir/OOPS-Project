@@ -1,5 +1,7 @@
 // AdvancedContest.cpp — Advanced: 10% easy, 30% medium, 60% hard
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #include "AdvancedContest.h"
 #include "ProblemBank.h"

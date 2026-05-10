@@ -1,6 +1,8 @@
 // Contest.h — Abstract contest base class (INHERITANCE + POLYMORPHISM)
 // Different contest groups override buildQuestionSet() differently
-// Faraz Aamir | 25I-2069 | OOP Project | Spring 2026
+// Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
+// Shawwal       | 25I-2182 |
+// Farhan        | 25I-2073 |
 
 #ifndef CONTEST_H
 #define CONTEST_H
