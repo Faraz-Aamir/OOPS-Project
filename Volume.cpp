@@ -4,6 +4,8 @@
 // Farhan        | 25I-2073 |
 
 #include "Volume.h"
+#include <fstream>
+#include <cstdio>
 
 Volume::Volume(const MyString& name)
     : name(name), primaryPartition(nullptr) {}
@@ -359,6 +361,7 @@ RegularFile* Volume::writeToVFS(const MyString& path, const MyString& content, U
 }
 
 MyString Volume::readFromVFS(const MyString& path, User* user) const {
+    (void)user; // Permission check deferred to caller
     Directory* root = getRoot();
     if (!root) return MyString("");
 
@@ -399,6 +402,104 @@ bool Volume::existsInVFS(const MyString& path) const {
     Directory* root = getRoot();
     if (!root) return false;
     return root->findByPath(path) != nullptr;
+}
+
+// ============================================================
+// DISK PERSISTENCE — Save/Load VFS state across shutdown/restart
+// ============================================================
+
+bool Volume::saveToDisk(const char* filePath) const {
+    std::ofstream ofs(filePath);
+    if (!ofs.is_open()) {
+        std::cerr << "  ERROR: Could not open state file for writing: " << filePath << std::endl;
+        return false;
+    }
+
+    // Write header with user count (skip system user with id 0)
+    int userCount = 0;
+    for (int i = 0; i < users.size(); i++) {
+        if (users[i]->getUserId() != 0) userCount++;
+    }
+    ofs << "OJ_STATE_V1" << std::endl;
+    ofs << userCount << std::endl;
+
+    // Serialize each non-system user as one line
+    for (int i = 0; i < users.size(); i++) {
+        if (users[i]->getUserId() == 0) continue; // Skip system user
+        ofs << users[i]->serialize() << std::endl;
+    }
+
+    ofs.close();
+    std::cout << "  State saved to disk: " << userCount << " user(s) persisted to " << filePath << std::endl;
+    return true;
+}
+
+int Volume::loadUsersFromDisk(const char* filePath) {
+    std::ifstream ifs(filePath);
+    if (!ifs.is_open()) {
+        // No state file — first run, nothing to restore
+        return 0;
+    }
+
+    // Read header
+    char headerBuf[64];
+    ifs.getline(headerBuf, sizeof(headerBuf));
+    MyString header(headerBuf);
+    if (header != "OJ_STATE_V1") {
+        std::cerr << "  WARNING: Invalid state file format. Starting fresh." << std::endl;
+        ifs.close();
+        return 0;
+    }
+
+    char countBuf[32];
+    ifs.getline(countBuf, sizeof(countBuf));
+    int userCount = MyString(countBuf).toInt();
+    int loaded = 0;
+
+    for (int i = 0; i < userCount; i++) {
+        char lineBuf[2048];
+        if (!ifs.getline(lineBuf, sizeof(lineBuf))) break;
+
+        MyString line(lineBuf);
+        if (line.empty()) continue;
+
+        User* user = User::deserialize(line);
+        if (!user) continue;
+
+        // Check if user already exists (shouldn't, but be safe)
+        if (findUser(user->getUsername())) {
+            delete user;
+            continue;
+        }
+
+        // Add user to the volume's user list
+        users.push_back(user);
+
+        // Rebuild the user's VFS directory structure
+        Directory* root = getRoot();
+        if (root) {
+            Directory* usersDir = root->findDirByPath("users");
+            if (!usersDir) {
+                User* sysUser = findUser("system");
+                usersDir = root->createPath("users", sysUser ? sysUser : user);
+            }
+            Directory* homeDirectory = usersDir->createPath(user->getUsername(), user);
+            if (homeDirectory) {
+                homeDirectory->createPath("solutions", user);
+                homeDirectory->createPath("contests", user);
+            }
+
+            // Re-save user profile to VFS
+            MyString profilePath = MyString("users/") + user->getUsername() + "/profile.dat";
+            writeToVFS(profilePath, user->serialize(), user);
+        }
+
+        loaded++;
+    }
+
+    ifs.close();
+    std::cout << "  State restored from disk: " << loaded << " user(s) loaded from " << filePath << std::endl;
+    return loaded;
 }
 
 // ============================================================

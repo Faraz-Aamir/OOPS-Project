@@ -7,6 +7,9 @@
 #include "HttpServer.h"
 #include "ScoringEngine.h"
 
+// State file for persisting user data across restarts
+const char* OnlineJudge::STATE_FILE = "oj_state.dat";
+
 OnlineJudge::OnlineJudge() : vfs(nullptr), problemBank(nullptr),
     userManager(nullptr), sessionManager(nullptr), contestManager(nullptr) {}
 
@@ -45,13 +48,27 @@ void OnlineJudge::initialize() {
     problemBank = new ProblemBank(vfs);
     problemBank->seedProblems();
 
+    // --- Restore persisted state from disk (users, scores, etc.) ---
+    int restored = vfs->loadUsersFromDisk(STATE_FILE);
+
     userManager = new UserManager(vfs);
     sessionManager = new SessionManager(vfs);
     contestManager = new ContestManager(vfs, problemBank);
 
     std::cout << "\n  Initialization complete!" << std::endl;
     std::cout << "  Problems loaded: " << problemBank->getTotalCount() << std::endl;
+    if (restored > 0) {
+        std::cout << "  Restored users: " << restored << std::endl;
+    }
     std::cout << "  VFS ready.\n" << std::endl;
+}
+
+void OnlineJudge::shutdown() {
+    std::cout << "\n  Saving state to disk..." << std::endl;
+    if (vfs) {
+        vfs->saveToDisk(STATE_FILE);
+        vfs->printFinalState(std::cout);
+    }
 }
 
 void OnlineJudge::run(int port) {
@@ -271,7 +288,30 @@ MyString OnlineJudge::handleAPIRequest(const MyString& path, const MyString& met
         return jsonResponse("ok", "Contest code discarded.");
     }
 
-    // ===== SAVE PROGRESS =====
+    // ===== SAVE/LOAD PROGRESS =====
+    if (path == "/api/contest/get-progress" && method == "POST") {
+        if (!sessionManager->isLoggedIn()) return jsonResponse("error", "Not logged in.");
+        Contest* c = contestManager->getActiveContest(sessionManager->getCurrentUser()->getUsername());
+        if (!c) return jsonResponse("error", "No active contest.");
+        MyString indexStr = getField("problemIndex");
+        int idx = indexStr.toInt();
+        MyString savedCode = c->getSavedCode(idx);
+        // Escape the code for JSON
+        MyString escaped;
+        for (int i = 0; i < savedCode.length(); i++) {
+            char ch = savedCode[i];
+            if (ch == '\\') escaped += "\\\\";
+            else if (ch == '"') escaped += "\\\"";
+            else if (ch == '\n') escaped += "\\n";
+            else if (ch == '\t') escaped += "\\t";
+            else if (ch == '\r') escaped += "\\r";
+            else escaped += ch;
+        }
+        MyString data = MyString("{\"code\":\"") + escaped
+            + "\",\"problemIndex\":" + MyString::fromInt(idx) + "}";
+        return jsonResponse("ok", "Progress loaded", data);
+    }
+
     if (path == "/api/contest/save-progress" && method == "POST") {
         if (!sessionManager->isLoggedIn()) return jsonResponse("error", "Not logged in.");
         Contest* c = contestManager->getActiveContest(sessionManager->getCurrentUser()->getUsername());

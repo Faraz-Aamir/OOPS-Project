@@ -38,6 +38,7 @@ HttpServer::HttpServer(int port, OnlineJudge* app)
 HttpServer::~HttpServer() { stop(); }
 
 HttpServer::HttpRequest HttpServer::parseRequest(const char* raw, int len) const {
+    (void)len; // Raw string is null-terminated, length not needed
     HttpRequest req;
     MyString rawStr(raw);
 

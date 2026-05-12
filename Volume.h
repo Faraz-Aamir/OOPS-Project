@@ -1,5 +1,6 @@
 // Volume.h — Top-level system container
 // Ported from Assignment 3 + extended for Online Judge
+// Includes disk persistence for VFS state across shutdown/restart
 // Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
 // Shawwal       | 25I-2182 |
 // Farhan        | 25I-2073 |
@@ -85,6 +86,10 @@ public:
     Directory* ensureDir(const MyString& path, User* user);
     bool deleteFromVFS(const MyString& path, User* user);
     bool existsInVFS(const MyString& path) const;
+
+    // --- Disk Persistence (VFS state across shutdown/restart) ---
+    bool saveToDisk(const char* filePath) const;
+    int loadUsersFromDisk(const char* filePath);
 
     // --- Display ---
     void printFinalState(std::ostream& os) const;

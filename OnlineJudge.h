@@ -1,5 +1,5 @@
 // OnlineJudge.h — Main application controller
-// Wires all layers together
+// Wires all layers together; includes disk persistence on shutdown/startup
 // Faraz Aamir   | 25I-2069 | OOP Project | Spring 2026
 // Shawwal       | 25I-2182 |
 // Farhan        | 25I-2073 |
@@ -25,11 +25,15 @@ private:
     // JSON helper
     MyString jsonResponse(const MyString& status, const MyString& message, const MyString& data = "") const;
 
+    // State file path for disk persistence
+    static const char* STATE_FILE;
+
 public:
     OnlineJudge();
     ~OnlineJudge();
 
-    void initialize(); // Set up VFS, seed problems
+    void initialize(); // Set up VFS, seed problems, load saved state
+    void shutdown();   // Save state to disk before exit
     void run(int port = 8080); // Start HTTP server
 
     // API handler — called by HttpServer

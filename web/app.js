@@ -237,6 +237,15 @@ async function loadContestProblems() {
 }
 
 async function openContestProblem(index, id) {
+    // Auto-save current problem's code before switching
+    if (currentContestProblemIndex >= 0) {
+        const currentCode = document.getElementById('contest-editor').value;
+        await api('/api/contest/save-progress', 'POST', {
+            problemIndex: currentContestProblemIndex.toString(),
+            code: currentCode
+        });
+    }
+
     const res = await api('/api/problem/' + id);
     if (res.status !== 'ok') return;
     const p = res.data;
@@ -245,7 +254,17 @@ async function openContestProblem(index, id) {
     document.getElementById('contest-problem-desc').textContent = p.description;
     document.getElementById('contest-sample-input').textContent = p.sampleInput || '(none)';
     document.getElementById('contest-sample-output').textContent = p.sampleOutput;
-    document.getElementById('contest-editor').value = '#include<iostream>\nusing namespace std;\n\nint main() {\n    \n    return 0;\n}\n';
+
+    // Load saved code from backend (if any)
+    const progRes = await api('/api/contest/get-progress', 'POST', {
+        problemIndex: index.toString()
+    });
+    if (progRes.status === 'ok' && progRes.data && progRes.data.code && progRes.data.code.length > 0) {
+        document.getElementById('contest-editor').value = progRes.data.code;
+    } else {
+        document.getElementById('contest-editor').value = '#include<iostream>\nusing namespace std;\n\nint main() {\n    \n    return 0;\n}\n';
+    }
+
     document.getElementById('contest-solve').style.display = 'flex';
     document.getElementById('contest-verdict').style.display = 'none';
 }
@@ -268,6 +287,13 @@ async function submitContestSolution() {
     vBox.style.display = 'block';
     if (res.status === 'ok') {
         const verdict = res.data.verdict;
+
+        // Auto-save the submitted code as progress
+        await api('/api/contest/save-progress', 'POST', {
+            problemIndex: currentContestProblemIndex.toString(),
+            code: code
+        });
+
         if (verdict === 'ACCEPTED') {
             vBox.textContent = '✅ Verdict: ACCEPTED — Well done!';
             vBox.className = 'verdict-box verdict-accepted';

@@ -55,7 +55,7 @@ MyString Problem::serialize() const {
 Problem* Problem::deserialize(const MyString& data) {
     // Split by |||
     MyString parts[64];
-    int count = data.split('|', parts, 64);
+    data.split('|', parts, 64);
     // "|||" splits into parts with empty strings between, so we need to handle this
     // Actually let's use a simpler approach — find "|||" positions
     DynamicArray<MyString> sections;
